@@ -4,9 +4,15 @@
 # Douglas Berdeaux
 # weaknetlabs@gmail.com
 #
-# OS Independent PII/SysPII Search and 
-import os
-import re
+# OS Independent PII/SysPII Search and
+import os # for opening files (OS independent)
+import re # for regular expressions
+import sys # for args
+
+if len(sys.argv)>1:
+	if re.search("-?-h(elp)?",sys.argv[1]):
+		print "\nIDQAT [Help]:\n\tUsage:\n\t\t./idqat.py <directory>\n"
+		sys.exit(1)
 
 fileList = list() # all files found
 positivePiiFilesList = list()
