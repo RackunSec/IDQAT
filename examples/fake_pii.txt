@@ -11,3 +11,4 @@
 412-555-9999 # OK Phone
 (412).555.9999 # OK Phone
 1-412.555.9999 # OK Phone
+12345-12345-12345-12345-12345 # OK Windows Product Key
