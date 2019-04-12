@@ -23,7 +23,9 @@ if len(sys.argv)>1:
 		argpath = sys.argv[1]
 if argpath  == '':
 	argpath = '.'
-
+##
+# Objects:
+##
 # PII methods and values:
 class piiObject:
 	def __init__(self):
@@ -35,12 +37,18 @@ class piiObject:
 		self.piiRegex["reCC"] = "[54][0-9]{3}[^0-9]([0-9]{4}[^0-9]){2}[0-9]{4}"
 		# SysPII:
 		self.piiRegex["reSerialNo"] = "([0-9]{5}-){4}[0-9]{5}"
+
 # File methods and values:
 class FileObject: # OOP!
 	def __init__(self):
 		# Globals values in Object:
 		self.fileList = list()
-		self.positivePiiFilesList = list()
+		self.positivePiiFilesList = {} # Associate Object:
+			# filename: {
+				# "path": "/path/to/filename",
+				# "hash":"hashed value",
+				# "piiTypes": piiTypes() # TODO
+			# }
 		self.fileResultCount = 0
 	# Hashing method:
 	def fileHash(self,fh): # requires a file handle
@@ -76,37 +84,39 @@ while file < len(files.fileList):
 		line = line.rstrip()
 		if re.search(pii.piiRegex["reSSN"],line):
 			print "[!] SSN found in file: "+files.fileList[file]+" -> "+line # TODO remove printing of PII to stdout
-			files.positivePiiFilesList.append(files.fileList[file])
+			files.positivePiiFilesList[files.fileList[file]] = {}
 			files.fileResultCount+=1
 			fileFoundPIIBool=1
 		if re.search(pii.piiRegex["reDoB"],line):
 			print "[!] DoB found in file: "+files.fileList[file]+" -> "+line # TODO remove printing of PII to stdout
-			files.positivePiiFilesList.append(files.fileList[file])
+			files.positivePiiFilesList[files.fileList[file]] = {}
 			files.fileResultCount+=1
 			fileFoundPIIBool=1
 		if re.search(pii.piiRegex["rePhone"],line):
 			print "[!] Phone number found in file: "+files.fileList[file]+" -> "+line # TODO remove printing of PII to stdout
-			files.positivePiiFilesList.append(files.fileList[file])
+			files.positivePiiFilesList[files.fileList[file]] = {}
 			files.fileResultCount+=1
 			fileFoundPIIBool=1
 		if re.search(pii.piiRegex["reSerialNo"],line):
 			print "[!] Possible serial number found in file: "+files.fileList[file]+" -> "+line # TODO remove
-			files.positivePiiFilesList.append(files.fileList[file])
+			files.positivePiiFilesList[files.fileList[file]] = {}
 			files.fileResultCount+=1
 			fileFoundPIIBool=1
 		if re.search(pii.piiRegex["reCC"],line):
 			print "[!] Possible credit card number found in file: "+files.fileList[file]+" -> "+line # TODO remove
-			files.positivePiiFilesList.append(files.fileList[file])
+			files.positivePiiFilesList[files.fileList[file]] = {}
 			files.fileResultCount+=1
 			fileFoundPIIBool=1
 	# rewind file and hash it if a positive was found:
 	if fileFoundPIIBool == 1:
 		# rewind read and pass fh to fileHash(fh) method.
 		fh.seek(0,0) # rewind
-		print files.fileHash(fh)
+		files.positivePiiFilesList[files.fileList[file]]["hash"] = files.fileHash(fh) # create a JSON-like structure
+		files.positivePiiFilesList[files.fileList[file]]["path"] = argpath
 	file += 1
 
 # 3. Log it in database
 
 # 4. Clean up and Exit
 print "\n[*] "+str(files.fileResultCount)+" results found.\n"
+print files.positivePiiFilesList
