@@ -119,4 +119,4 @@ while file < len(files.fileList):
 
 # 4. Clean up and Exit
 print "\n[*] "+str(files.fileResultCount)+" results found.\n"
-print files.positivePiiFilesList
+print files.positivePiiFilesList # DEBUG
