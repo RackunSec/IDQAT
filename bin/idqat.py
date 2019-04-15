@@ -86,18 +86,19 @@ while file < len(files.fileList):
 	fileFoundPIIBool = 0 # if PII found, == 1
 	filePiiCount = 0 # how many instances found per file?
 	for line in fh:
-		line = line.rstrip()
+		line = line.rstrip() # chomp off any additional white spaces
 		# Loop through the PII regex objects and re.search() the line from the file:
 		for item in pii.piiRegex:
 			if re.search(pii.piiRegex[item]["re"],line): # if match found:
 				filePiiCount+=1 # increment token
 				print "[!] Possible PII Match on line: "+line+" of type: "+pii.piiRegex[item]["type"]
-				if not files.fileList[file] in files.positivePiiFilesList: # does it already exist?:
+				if not files.fileList[file] in files.positivePiiFilesList: # is this file in the list yet?
 					files.fileResultCount+=1 # increment found token
 					files.positivePiiFilesList[files.fileList[file]] = {
-						"type":[]
+						"type":[] # create an array and append the type if not already there later
 					}
-				if not pii.piiRegex[item]["type"] in files.positivePiiFilesList[files.fileList[file]]:
+				# Append the type
+				if not pii.piiRegex[item]["type"] in files.positivePiiFilesList[files.fileList[file]]["type"]:
 					files.positivePiiFilesList[files.fileList[file]]["type"].append(pii.piiRegex[item]["type"])
 				fileFoundPIIBool=1
 
@@ -113,5 +114,5 @@ while file < len(files.fileList):
 # 3. Log it in database
 
 # 4. Clean up and Exit
-print "\n[*] "+str(files.fileResultCount)+" results found.\n"
+print "\n[*] "+str(files.fileResultCount)+" files found containing PII.\n"
 print files.positivePiiFilesList # DEBUG
