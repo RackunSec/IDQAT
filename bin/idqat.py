@@ -83,15 +83,15 @@ file = 0
 while file < len(files.fileList):
 	# print (fileList[file])
 	fh = open(files.fileList[file]) # open the file with a file handler
-	fileFoundPIIBool = 0 # if PII found, == 1
+	fileFoundPIIBool = 0 # This Boolean determines if the file should be added/hashed to the final list object
 	filePiiCount = 0 # how many instances found per file?
-	for line in fh:
+	for line in fh: # loop through each line in the file:
 		line = line.rstrip() # chomp off any additional white spaces
 		# Loop through the PII regex objects and re.search() the line from the file:
-		for item in pii.piiRegex:
+		for item in pii.piiRegex: # Loop through each item in teh Regex object:
 			if re.search(pii.piiRegex[item]["re"],line): # if match found:
 				filePiiCount+=1 # increment token
-				print "[!] Possible PII Match on line: "+line+" of type: "+pii.piiRegex[item]["type"]
+				print "[!] Possible PII Match found of type: "+pii.piiRegex[item]["type"]
 				if not files.fileList[file] in files.positivePiiFilesList: # is this file in the list yet?
 					files.fileResultCount+=1 # increment found token
 					files.positivePiiFilesList[files.fileList[file]] = {
@@ -100,7 +100,7 @@ while file < len(files.fileList):
 				# Append the type
 				if not pii.piiRegex[item]["type"] in files.positivePiiFilesList[files.fileList[file]]["type"]:
 					files.positivePiiFilesList[files.fileList[file]]["type"].append(pii.piiRegex[item]["type"])
-				fileFoundPIIBool=1
+				fileFoundPIIBool=1 # This Boolean determines if the file should be added/hashed to the final list object
 
 	# rewind file and hash it if a positive was found:
 	if fileFoundPIIBool == 1:
