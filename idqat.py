@@ -1,21 +1,26 @@
 #!/usr/bin/python
+#
 # 2019 (c) GNU, WeakNet Labs
 # This product should come with the GNU License
 # Douglas Berdeaux
 # weaknetlabs@gmail.com
 #
 # OS Independent PII/SysPII Query and Alert Tool
+# Version 0.4.19 (Version,MM,YY)
 #
 ##
 import os # for opening files (OS independent)
 import re # for regular expressions
 import sys # for args
 import hashlib # Hashing file content
+import datetime # timestamps
+import sqlite3 # for the SQLLite3 DB
+from modules.colors import Colors # Coloring text
 
 ##
 # Help Me!
 ##
-argpath = ''
+argpath = '' # The path to search (recursively)
 if len(sys.argv)>1:
 	if re.search("-?-h(elp)?",sys.argv[1]):
 		print "\nIDQAT [Help]:\n\tUsage:\n\t\t./idqat.py <directory>\n"
@@ -23,7 +28,7 @@ if len(sys.argv)>1:
 	else: # must have been a path:
 		argpath = sys.argv[1]
 if argpath  == '':
-	argpath = '.'
+	argpath = os.getcwd()
 ##
 # Objects:
 ##
@@ -39,8 +44,6 @@ class Pii:
 			# SysPII:
 			"serialNo":{"re":"([0-9]{5}-){4}[0-9]{5}","name":"Serial Number","type":"System PII"}
 			}
-		#self.piiCSVRegex = {} # for any CSV Files that may contain PII
-		#self.piiCSVRegex["csvSSN"] = ",\s?" + self.piiRegex["reSSN"] + "\s?,"
 
 # File methods and values:
 class File:
@@ -65,13 +68,14 @@ class File:
 		# check with md5sum < filename
 
 pii = Pii() # instantiate object from class
-files = File() # instantiate oibject from class
+files = File() # instantiate object from class
+colors = Colors() # My first PyModule - Colors class file colors.py
 
 ##
 # Workflow of the App:
 ##
-print "\nIDQAT - \n"
-print "[*] Recursively searching directory "+argpath+" ... "
+print colors.BLU+"\nIDQAT"+colors.RST+" - "+str(datetime.datetime.today().year)+" WeakNet Labs, "+colors.UL+"https://idqat.com\n"+colors.RST
+print "[*] Recursively searching directory "+argpath+" ... \n"
 
 # 1. Get the file list
 for root,directories, filenames in os.walk(argpath):
@@ -91,7 +95,8 @@ while file < len(files.fileList):
 		for item in pii.piiRegex: # Loop through each item in teh Regex object:
 			if re.search(pii.piiRegex[item]["re"],line): # if match found:
 				filePiiCount+=1 # increment token
-				print "[!] Possible PII Match found of type: "+pii.piiRegex[item]["type"]
+				if fileFoundPIIBool == 0:
+					print colors.DANGER+"[!]"+colors.RST+" Possible PII Match found in "+colors.DANGER+files.fileList[file]+colors.RST+" of type: "+colors.DANGER+pii.piiRegex[item]["type"]+colors.RST
 				if not files.fileList[file] in files.positivePiiFilesList: # is this file in the list yet?
 					files.fileResultCount+=1 # increment found token
 					files.positivePiiFilesList[files.fileList[file]] = {
@@ -109,10 +114,14 @@ while file < len(files.fileList):
 		files.positivePiiFilesList[files.fileList[file]]["hash"] = files.fileHash(fh) # create a JSON-like structure
 		files.positivePiiFilesList[files.fileList[file]]["path"] = argpath
 		files.positivePiiFilesList[files.fileList[file]]["instances"] = filePiiCount
+		print colors.DANGER+"[!] "+str(filePiiCount)+colors.RST+" instance(s) found in file.\n"
 	file += 1
 
 # 3. Log it in database
 
 # 4. Clean up and Exit
-print "\n[*] "+str(files.fileResultCount)+" files found containing PII.\n"
-print files.positivePiiFilesList # DEBUG
+if files.fileResultCount>0:
+	print colors.DANGER+"[*] "+str(files.fileResultCount)+" files found containing PII.\n"+colors.RST
+else:
+	print "[*] "+str(files.fileResultCount)+" files found containing PII.\n"
+#print files.positivePiiFilesList # DEBUG
