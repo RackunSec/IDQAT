@@ -1,3 +1,14 @@
+#!/usr/bin/python
+#
+# 2019 (c) GNU, WeakNet Labs
+# This product should come with the GNU License
+# Douglas Berdeaux
+# weaknetlabs@gmail.com
+#
+# OS Independent PII/SysPII Query and Alert Tool
+# Databse class module.
+#
+##
 import sqlite3
 from sqlite3 import Error
 import sys
@@ -20,15 +31,17 @@ class Database:
             connection.close()
 
     # Method to insert a file record for each file scanned.
-    def insertFile(self,file,datePiiDiscovered,dateScanned,dateNoPii,piiCount,piiTypes):
+    def insertFile(self,valueList):
+        # print valueList # DEBUG
         try:
-            db_file = "config/db/idqat_default.db"
-            connection = sqlite3.connect(db_file)
-            insert_file_sql = "INSERT INTO files_scanned values(NULL,'"+file+"','"+str(datePiiDiscovered)+"','"+dateScanned+"','"+str(dateNoPii)+"','"+str(piiCount)+"','"+piiTypes+"')" # insert file record
-            print insert_file_sql
-            executeSQL = connection.cursor()
-            executeSQL.execute(insert_file_sql)
-            return executeSQL.lastrowid
+            db_file = "config/db/idqat_default.db" # TODO offload this value to a config file.
+            connection = sqlite3.connect(db_file) # create a connection object
+            # construct an INSERT statement, pass an arrya of values to this method. Order is important.
+            insert_file_sql = "INSERT into files_scanned(file_id,file_name,date_pii_discovered,date_scanned,date_no_pii,pii_count,pii_types_found) values(NULL,?,?,?,?,?,?)"
+            with connection:
+                executeSQL = connection.cursor() # open the connetcion object
+                executeSQL.execute(insert_file_sql,valueList) # send the SQL statement to SQLite3
+            return executeSQL.lastrowid # returned it
         except Error as error:
             print error
             sys.exit(1)

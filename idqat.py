@@ -14,7 +14,6 @@ import re # for regular expressions
 import sys # for args
 import hashlib # Hashing file content
 import datetime # timestamps
-#import sqlite3 # for the SQLLite3 DB
 from modules.colors import Colors # Coloring text
 from modules.database import Database
 
@@ -118,8 +117,6 @@ while file < len(files.fileList):
 	if recordExistCheck != None:
 		print "[*] record for file exists."
 	else:
-		print "[*] record does not exist."
-		# TODO insert record
 		if fileFoundPIIBool==1:
 			piiFoundDate=str(datetime.datetime.now())
 			piiNotFound=0
@@ -128,7 +125,8 @@ while file < len(files.fileList):
 			piiNotFound=str(datetime.datetime.now())
 			# TODO concat files.positivePiiFilesList[files.fileList[file]]["type"] types for final arg here:
 			# TODO Files with apostrophes! :S
-		database.insertFile(files.fileList[file],piiFoundDate,str(datetime.datetime.now()),piiNotFound,filePiiCount,'PII') # insert the record
+		valueList = (files.fileList[file],piiFoundDate,str(datetime.datetime.now()),piiNotFound,filePiiCount,'PII')
+		database.insertFile(valueList) # insert the record
 	file += 1
 
 # 3. Log it in database
