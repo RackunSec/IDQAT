@@ -14,7 +14,7 @@ import re # for regular expressions
 import sys # for args
 import hashlib # Hashing file content
 import datetime # timestamps
-import sqlite3 # for the SQLLite3 DB
+#import sqlite3 # for the SQLLite3 DB
 from modules.colors import Colors # Coloring text
 from modules.database import Database
 
