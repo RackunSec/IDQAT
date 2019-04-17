@@ -6,10 +6,10 @@
 # weaknetlabs@gmail.com
 #
 # OS Independent PII/SysPII Query and Alert Tool
-# Version 0.4.19 (Version,MM,YY)
+# Version 0.4.19a (Version,MM,YY,sub)
 #
 ##
-import os # for opening files (OS independent)
+import os # for opening files (OS independent), current directory, etc
 import re # for regular expressions
 import sys # for args
 import hashlib # Hashing file content
@@ -27,7 +27,7 @@ if len(sys.argv)>1:
 		sys.exit(1)
 	else: # must have been a path:
 		argpath = sys.argv[1]
-if argpath  == '':
+if argpath  == '': # if not specified, let's use the current working directory.
 	argpath = os.getcwd()
 ##
 # Objects:
@@ -51,11 +51,6 @@ class File:
 		# Globals values in Object:
 		self.fileList = list()
 		self.positivePiiFilesList = {} # Associate Object:
-			# filename: {
-				# "path": "/path/to/filename",
-				# "hash":"hashed value",
-				# "piiTypes": piiTypes() # TODO
-			# }
 		self.fileResultCount = 0
 	# Hashing method:
 	def fileHash(self,fh): # requires a file handle

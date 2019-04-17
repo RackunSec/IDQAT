@@ -2,6 +2,14 @@
 import sqlite3
 from sqlite3 import Error
 import sys # pass to me the db file
+from modules.colors import Colors
+
+colors = Colors()
+
+if len(sys.argv) != 2:
+    # Help
+    print colors.DANGER+"\n[*] Usage:\n\tpython sqlite3.setup.py (path to db file)\n"+colors.RST
+    exit (1) # die
 
 def create_connection(db_file):
     try:
@@ -22,10 +30,10 @@ def create_connection(db_file):
         """
         executeSQL = connection.cursor()
         executeSQL.execute(create_table_sql)
-        print "[*] Process completed."
+        print colors.OK+"[*] Process completed."+colors.RST
         sys.exit(0)
     except Error as error:
-        print "[!] There was an error accessing the file: "+sys.argv[1]+":\n"+str(error)+"\n"
+        print colors.DANGER+"[!] There was an error accessing the file: "+sys.argv[1]+":\n"+str(error)+"\n"+colors.RST
         sys.exit(1) # exit with no connection
     finally:
         connection.close()
