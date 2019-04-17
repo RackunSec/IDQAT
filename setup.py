@@ -5,8 +5,8 @@
 # Douglas Berdeaux
 # weaknetlabs@gmail.com
 #
-# IDQAT Setup Script - requires SQLite3
-#
+# OS Independent PII/SysPII Query and Alert Tool
+# IDQAT Setup Script.
 #
 ##
 import sqlite3

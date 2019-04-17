@@ -15,7 +15,7 @@ import sys # for args
 import hashlib # Hashing file content
 import datetime # timestamps
 from modules.colors import Colors # Coloring text
-from modules.database import Database
+from modules.database import Database # all DB functions go here
 
 ##
 # Help Me!
@@ -113,10 +113,8 @@ while file < len(files.fileList):
 		print colors.DANGER+"[!] "+str(filePiiCount)+colors.RST+" instance(s) found in file.\n"
 	# Does it exist in the database?
 	recordExistCheck = database.checkFileRecord(files.fileList[file])
-	print "[*] database check for file: "+files.fileList[file]+", rowcount: "+str(recordExistCheck)
-	if recordExistCheck != None:
-		print "[*] record for file exists."
-	else:
+	# print "[*] database check for file: "+files.fileList[file]+", rowcount: "+str(recordExistCheck) # DEBUG
+	if recordExistCheck == 0:
 		if fileFoundPIIBool==1:
 			piiFoundDate=str(datetime.datetime.now())
 			piiNotFound=0
@@ -136,4 +134,3 @@ if files.fileResultCount>0:
 	print colors.DANGER+"[*] "+str(files.fileResultCount)+" files found containing PII.\n"+colors.RST
 else:
 	print "[*] "+str(files.fileResultCount)+" files found containing PII.\n"
-#print files.positivePiiFilesList # DEBUG

@@ -53,5 +53,28 @@ class Database:
         db_file = "config/db/idqat_default.db"
         connection = sqlite3.connect(db_file)
         check_file_exists_sql = "SELECT * from files_scanned where file_name = '"+file+"';"
-        executeSQL = connection.cursor()
-        executeSQL.execute(check_file_exists_sql).rowcount
+        with connection:
+            executeSQL = connection.cursor()
+            executeSQL.execute(check_file_exists_sql)
+            resultSet = executeSQL.fetchone()
+            if resultSet == None:
+                return 0
+            else:
+                return 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# EOF
