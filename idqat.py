@@ -16,6 +16,7 @@ import hashlib # Hashing file content
 import datetime # timestamps
 import sqlite3 # for the SQLLite3 DB
 from modules.colors import Colors # Coloring text
+from modules.database import Database
 
 ##
 # Help Me!
@@ -65,6 +66,7 @@ class File:
 pii = Pii() # instantiate object from class
 files = File() # instantiate object from class
 colors = Colors() # My first PyModule - Colors class file colors.py
+database = Database() # all DB functions
 
 ##
 # Workflow of the App:
@@ -110,6 +112,23 @@ while file < len(files.fileList):
 		files.positivePiiFilesList[files.fileList[file]]["path"] = argpath
 		files.positivePiiFilesList[files.fileList[file]]["instances"] = filePiiCount
 		print colors.DANGER+"[!] "+str(filePiiCount)+colors.RST+" instance(s) found in file.\n"
+	# Does it exist in the database?
+	recordExistCheck = database.checkFileRecord(files.fileList[file])
+	print "[*] database check for file: "+files.fileList[file]+", rowcount: "+str(recordExistCheck)
+	if recordExistCheck != None:
+		print "[*] record for file exists."
+	else:
+		print "[*] record does not exist."
+		# TODO insert record
+		if fileFoundPIIBool==1:
+			piiFoundDate=str(datetime.datetime.now())
+			piiNotFound=0
+		else:
+			piiFoundDate=0
+			piiNotFound=str(datetime.datetime.now())
+			# TODO concat files.positivePiiFilesList[files.fileList[file]]["type"] types for final arg here:
+			# TODO Files with apostrophes! :S
+		database.insertFile(files.fileList[file],piiFoundDate,str(datetime.datetime.now()),piiNotFound,filePiiCount,'PII') # insert the record
 	file += 1
 
 # 3. Log it in database
