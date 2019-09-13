@@ -1,0 +1,5 @@
+### WARNING: This file should not be readable by anyone but root.
+IDQAT_DB=
+IDQAT_DB_HOST=
+IDQAT_DB_USR=
+IDQAT_DB_PASS=

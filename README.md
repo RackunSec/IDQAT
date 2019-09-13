@@ -10,3 +10,10 @@ Thank you.
 ![IDQAT Logo](files/images/grey-idqat.png)
 
 IDQAT (ID Cat) - https://idqat.com/
+
+### Dependencies
+MySQL COnnector for Python:
+
+```
+pip install mysql-connector
+```
